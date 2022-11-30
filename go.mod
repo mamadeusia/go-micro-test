@@ -8,6 +8,7 @@ require (
 	github.com/yeqown/go-qrcode/v2 v2.2.1
 	github.com/yeqown/go-qrcode/writer/standard v1.2.1
 	go-micro.dev/v4 v4.9.0
+	go.uber.org/zap v1.17.0
 )
 
 require (
@@ -44,7 +45,6 @@ require (
 	go.mongodb.org/mongo-driver v1.5.1 // indirect
 	go.uber.org/atomic v1.7.0 // indirect
 	go.uber.org/multierr v1.6.0 // indirect
-	go.uber.org/zap v1.17.0 // indirect
 	golang.org/x/image v0.0.0-20200927104501-e162460cd6b5 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
