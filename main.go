@@ -52,14 +52,13 @@ func main() {
 		micro.Logger(logger),
 	)
 
-	test := logger.Options()
 	// Register handler
 	if err := pb.RegisterLoginsrvHandler(srv.Server(), new(handler.Loginsrv)); err != nil {
-		logger.Fatal(err)
+		logger.Logf(2, "Err", err)
 	}
 	logger.Log(logger.DebugLevel, "sdfsdfsd")
 	// Run service
 	if err := srv.Run(); err != nil {
-		logger.Logf()
+		logger.Logf(2, "Err", err)
 	}
 }
