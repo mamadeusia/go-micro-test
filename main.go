@@ -25,11 +25,11 @@ func main() {
 	devConfig.EncoderConfig.EncodeTime = uzapcore.RFC3339NanoTimeEncoder
 
 	loggerOpt := zap.WithConfig(devConfig)
-
 	zapLogger, err := zap.NewLogger(loggerOpt)
 	if err != nil {
-		fmt.Println("======", err)
+		fmt.Println(err)
 	}
+	logger.DefaultLogger = zapLogger
 
 	srv.Init(
 		micro.Name(service),
@@ -37,14 +37,14 @@ func main() {
 		micro.Logger(zapLogger),
 	)
 
-	zapLogger.Logf(logger.ErrorLevel, "Test log", "test 2")
+	logger.Logf(logger.ErrorLevel, "Test log", "test 2")
 
 	// Register handler
 	if err := pb.RegisterLoginsrvHandler(srv.Server(), new(handler.Loginsrv)); err != nil {
-		zapLogger.Logf(logger.ErrorLevel, "Err", err)
+		logger.Logf(logger.ErrorLevel, "Err", err)
 	}
 	// Run service
 	if err := srv.Run(); err != nil {
-		zapLogger.Logf(logger.ErrorLevel, "Err", err)
+		logger.Logf(logger.ErrorLevel, "Err", err)
 	}
 }
