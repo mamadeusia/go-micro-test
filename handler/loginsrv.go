@@ -18,6 +18,8 @@ import (
 	"github.com/yeqown/go-qrcode/v2"
 	"github.com/yeqown/go-qrcode/writer/standard"
 	"go-micro.dev/v4/cache"
+	"go-micro.dev/v4/errors"
+	"go-micro.dev/v4/logger"
 	"go-micro.dev/v4/util/log"
 
 	pb "loginsrv/proto"
@@ -56,21 +58,21 @@ func (e *Loginsrv) CheckRegister(ctx context.Context, req *pb.CheckRequest, rsp 
 	identifier := req.Identifire
 	session := e.computeSession(challenge, identifier)
 	if req.Session != session.Hex() {
-		// TODO ERRchallenge
+		logger.Errorf("session is wrong")
+
 		return nil
 	}
+
 	coreID, _, err := e.cache.Get(ctx, req.Session)
 	if err != nil || coreID != nil {
+		logger.Errorf("get cache error", err.Error())
 		return err
-		// TODO :: log
-		//
 	}
-	// string(coreID)
 
 	if !req.Accept {
 		redirect, err := e.handleReject(req.Challenge)
 		if err != nil {
-			// TODO LOG
+			logger.Errorf("handleReject error", err.Error())
 			return err
 		}
 		rsp.Redirect = redirect
@@ -81,7 +83,7 @@ func (e *Loginsrv) CheckRegister(ctx context.Context, req *pb.CheckRequest, rsp 
 
 	RedirectUrl, err := e.handleAccept(req.Challenge, subject, req.Remember)
 	if err != nil {
-		// TODO LOG
+		logger.Errorf("handleAccept error", err.Error())
 		return err
 	}
 
@@ -90,32 +92,25 @@ func (e *Loginsrv) CheckRegister(ctx context.Context, req *pb.CheckRequest, rsp 
 
 }
 func (e *Loginsrv) Register(ctx context.Context, req *pb.RegisterRequest, rsp *pb.RegisterResponse) error {
-	//
-
 	pub, err := crypto.SigToPub(
 		crypto.Keccak256(req.Session),
 		req.Signature,
 	)
 	if err != nil {
-
-		// TODO :: log
+		logger.Errorf("handleAccept error", err.Error())
 		return err
 	}
 	coreID := crypto.PubkeyToAddress(*pub)
 
 	if coreID != common.BytesToAddress(req.CoreID) {
-
-		return nil
-		// TODO LOG
+		logger.Errorf("coreID is not equal")
+		return errors.Forbidden("1", "coreID is not equal")
 	}
 
 	//in the cache part we need to store session and redirect
 	e.cache.Put(ctx, string(req.Session), coreID.Hex(), 10*time.Minute)
 
 	return nil
-
-	// cache = > session , coreID
-
 }
 
 // Call is a single request handler called via client.Call or the generated client code
