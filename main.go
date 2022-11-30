@@ -1,11 +1,13 @@
 package main
 
 import (
+	"fmt"
 	"loginsrv/handler"
 	pb "loginsrv/proto"
 
 	"github.com/go-micro/plugins/v4/logger/zap"
 	"go-micro.dev/v4"
+	"go-micro.dev/v4/logger"
 	uzap "go.uber.org/zap"
 	uzapcore "go.uber.org/zap/zapcore"
 )
@@ -17,48 +19,32 @@ var (
 
 func main() {
 	// Create service
-
-	// logger.Info("sdfsdfs")
 	srv := micro.NewService()
-	// logger, err := zap.NewLogger()
-	// if err != nil {
-	// 	logger.Logf(2, "sdfsdf")
 
-	// }
-	// logger.Logf(2, "sdfsdf")
-	prodEC := uzap.NewProductionEncoderConfig()
-	prodEC.EncodeTime = uzapcore.RFC3339TimeEncoder
+	devConfig := uzap.NewProductionConfig()
+	devConfig.EncoderConfig.EncodeTime = uzapcore.RFC3339NanoTimeEncoder
 
-	zapConfig := uzap.Config{
-		Level:             2,
-		Development:       true,
-		DisableCaller:     false,
-		DisableStacktrace: false,
-		Sampling:          &uzap.SamplingConfig{},
-		Encoding:          "",
-		EncoderConfig:     prodEC,
-		OutputPaths:       []string{},
-		ErrorOutputPaths:  []string{},
-		InitialFields:     map[string]interface{}{},
+	loggerOpt := zap.WithConfig(devConfig)
+
+	zapLogger, err := zap.NewLogger(loggerOpt)
+	if err != nil {
+		fmt.Println("======", err)
 	}
-
-	loggerOpt := zap.WithConfig(zapConfig)
-
-	logger, _ := zap.NewLogger(loggerOpt)
 
 	srv.Init(
 		micro.Name(service),
 		micro.Version(version),
-		micro.Logger(logger),
+		micro.Logger(zapLogger),
 	)
+
+	zapLogger.Logf(logger.ErrorLevel, "Test log", "test 2")
 
 	// Register handler
 	if err := pb.RegisterLoginsrvHandler(srv.Server(), new(handler.Loginsrv)); err != nil {
-		logger.Logf(2, "Err", err)
+		zapLogger.Logf(logger.ErrorLevel, "Err", err)
 	}
-	logger.Log(logger.DebugLevel, "sdfsdfsd")
 	// Run service
 	if err := srv.Run(); err != nil {
-		logger.Logf(2, "Err", err)
+		zapLogger.Logf(logger.ErrorLevel, "Err", err)
 	}
 }
