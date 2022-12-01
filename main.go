@@ -24,6 +24,9 @@ func main() {
 	devConfig := uzap.NewProductionConfig()
 	devConfig.EncoderConfig.EncodeTime = uzapcore.RFC3339NanoTimeEncoder
 
+	//TODO:fix log level
+	// devConfig.Level.SetLevel(uzapcore.DebugLevel)
+
 	loggerOpt := zap.WithConfig(devConfig)
 	zapLogger, err := zap.NewLogger(loggerOpt)
 	if err != nil {
@@ -36,8 +39,6 @@ func main() {
 		micro.Version(version),
 		micro.Logger(zapLogger),
 	)
-
-	logger.Logf(logger.ErrorLevel, "Test log", "test 2")
 
 	// Register handler
 	if err := pb.RegisterLoginsrvHandler(srv.Server(), new(handler.Loginsrv)); err != nil {
