@@ -55,7 +55,7 @@ func New(
 // TODO:add requestId for errors
 func (e *Loginsrv) CheckRegister(ctx context.Context, req *pb.CheckRequest, rsp *pb.CheckResponse) error {
 	challenge := req.Challenge
-	identifier := req.Identifire
+	identifier := req.Identifier
 	session := e.computeSession(challenge, identifier)
 	if req.Session != session.Hex() {
 		return errors.BadRequest("1", "session is not valid")

@@ -73,7 +73,7 @@ type CheckRequest struct {
 	unknownFields protoimpl.UnknownFields
 
 	Challenge  string `protobuf:"bytes,1,opt,name=challenge,proto3" json:"challenge,omitempty"`
-	Identifire string `protobuf:"bytes,2,opt,name=identifire,proto3" json:"identifire,omitempty"`
+	Identifier string `protobuf:"bytes,2,opt,name=identifire,proto3" json:"identifire,omitempty"`
 	Session    string `protobuf:"bytes,3,opt,name=session,proto3" json:"session,omitempty"`
 	Accept     bool   `protobuf:"varint,4,opt,name=accept,proto3" json:"accept,omitempty"`
 	Remember   bool   `protobuf:"varint,5,opt,name=remember,proto3" json:"remember,omitempty"`
@@ -120,7 +120,7 @@ func (x *CheckRequest) GetChallenge() string {
 
 func (x *CheckRequest) GetIdentifire() string {
 	if x != nil {
-		return x.Identifire
+		return x.Identifier
 	}
 	return ""
 }
