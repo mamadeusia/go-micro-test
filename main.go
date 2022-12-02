@@ -5,7 +5,6 @@ import (
 	pb "loginsrv/proto"
 
 	"github.com/go-micro/plugins/v4/logger/zap"
-	"github.com/go-micro/plugins/v4/registry/kubernetes"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
 	uzap "go.uber.org/zap"
@@ -32,7 +31,6 @@ func main() {
 		micro.Name(service),
 		micro.Version(version),
 		micro.Logger(zapLogger),
-		micro.Registry(kubernetes.NewRegistry()),
 	)
 
 	// Register handler
