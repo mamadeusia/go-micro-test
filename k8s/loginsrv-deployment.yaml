@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loginsrv-deployment
+  labels:
+    app: loginsrv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loginsrv
+  template:
+    metadata:
+      labels:
+        app: loginsrv
+    spec:
+      containers:
+        - name: loginsrv
+          image: hopeomid/loginservice:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: salt
+              valueFrom:
+                secretKeyRef:
+                  name: loginsrv-secret
+                  key: salt

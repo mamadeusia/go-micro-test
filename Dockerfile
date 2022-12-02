@@ -1,7 +1,7 @@
 FROM golang:alpine AS builder
 
 # Set Go env
-ENV CGO_ENABLED=0 GOOS=linux
+ENV CGO_ENABLED=1 GOOS=linux
 WORKDIR /go/src/loginsrv
 
 # Install dependencies

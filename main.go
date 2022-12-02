@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"loginsrv/handler"
 	pb "loginsrv/proto"
 
@@ -21,16 +20,10 @@ func main() {
 	// Create service
 	srv := micro.NewService()
 
-	devConfig := uzap.NewProductionConfig()
-	devConfig.EncoderConfig.EncodeTime = uzapcore.RFC3339NanoTimeEncoder
-
-	//TODO:fix log level
-	// devConfig.Level.SetLevel(uzapcore.DebugLevel)
-
-	loggerOpt := zap.WithConfig(devConfig)
-	zapLogger, err := zap.NewLogger(loggerOpt)
+	//TODO: read level from env
+	zapLogger, err := loggerWithLevel(logger.DebugLevel)
 	if err != nil {
-		fmt.Println(err)
+		logger.Errorf("could not create new logger: %s", err.Error())
 	}
 	logger.DefaultLogger = zapLogger
 
@@ -48,4 +41,15 @@ func main() {
 	if err := srv.Run(); err != nil {
 		logger.Errorf("could not run the service: %s", err)
 	}
+}
+
+func loggerWithLevel(level logger.Level) (logger.Logger, error) {
+	zapConfig := uzap.NewProductionConfig()
+	zapConfig.EncoderConfig.EncodeTime = uzapcore.RFC3339NanoTimeEncoder
+	zapConfig.Level.SetLevel(uzapcore.DebugLevel)
+
+	loggerOpt := zap.WithConfig(zapConfig)
+	logLevelOpt := logger.WithLevel(level)
+
+	return zap.NewLogger(loggerOpt, logLevelOpt)
 }
