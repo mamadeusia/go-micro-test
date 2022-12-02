@@ -42,10 +42,10 @@ func main() {
 
 	// Register handler
 	if err := pb.RegisterLoginsrvHandler(srv.Server(), new(handler.Loginsrv)); err != nil {
-		logger.Logf(logger.ErrorLevel, "Err", err)
+		logger.Errorf("RegisterLoginsrvHandler: %s", err)
 	}
 	// Run service
 	if err := srv.Run(); err != nil {
-		logger.Logf(logger.ErrorLevel, "Err", err)
+		logger.Errorf("could not run the service: %s", err)
 	}
 }

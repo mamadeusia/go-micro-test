@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: loginsrv-secret
+type: Opaque
+data:
+  salt: c2FsdDEyMw==
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loginsrv-deployment
+  labels:
+    app: loginsrv
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: loginsrv
+  template:
+    metadata:
+      labels:
+        app: loginsrv
+    spec:
+      containers:
+        - name: loginsrv
+          image: loginsrv
+          ports:
+            - containerPort: 8080
+          env:
+            name: MONGO_INITDB_ROOT_USERNAME
+            valueFrom:
+              secretKeyRef:
+              name: loginsrv-secret
+              key: salt
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loginsrv-service
+spec:
+  selector:
+    app: loginsrv
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
